@@ -1,0 +1,32 @@
+import json
+	import time
+	from android import Android
+	
+	droid = Android()
+	# dt = 100ms
+	dt = 0.1
+	droid.startSensingTimed(1, dt)
+	droid.webViewShow('file:///sdcard/sl4a/scripts' +
+	                  '/SensorGraph/Accelerometer/accUI.html')
+	xList = [0] * 20
+	yList = [0] * 20
+	zList = [0] * 20
+	
+	def postAccelerometerValues():
+	    xyzList = droid.sensorsReadAccelerometer().result
+	
+	    xList.append(xyzList[0])
+	    yList.append(xyzList[1])
+	    zList.append(xyzList[2])
+	
+	    del xList[0]
+	    del yList[0]
+	    del zList[0]
+	
+	    xyzDict = {"x":xList, "y":yList, "z":zList}
+	    droid.eventPost('stdout', json.dumps(xyzDict))
+	
+	while True:
+	    postAccelerometerValues()
+	    time.sleep(0.3)
+
